@@ -1,9 +1,11 @@
-from rest_framework.views import APIView
-from rest_framework.response import Response
+import datetime
+import jwt
 from rest_framework.exceptions import AuthenticationFailed
-from .serializers import UserSerializer
+from rest_framework.response import Response
+from rest_framework.views import APIView
+
 from .models import User
-import jwt, datetime
+from .serializers import UserSerializer
 
 
 # Create your views here.
@@ -40,6 +42,7 @@ class LoginView(APIView):
 
         return response
 
+
 class UserView(APIView):
     def get(self, request):
         token = request.COOKIES.get('jwt')
@@ -53,6 +56,7 @@ class UserView(APIView):
         user = User.objects.filter(id=payload['id']).first()
         serializer = UserSerializer(user)
         return Response(serializer.data)
+
 
 class LogoutView(APIView):
     def post(self, request):
