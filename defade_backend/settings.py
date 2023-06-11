@@ -11,10 +11,16 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 from pathlib import Path
+import environ
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# Reading Environment variables
+env = environ.Env(
+    DEBUG=(bool, False)
+)
+environ.Env.read_env(BASE_DIR / ".env")
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
@@ -26,6 +32,7 @@ SECRET_KEY = 'django-insecure-=p4t1v(p2*71-3lb^(7d!$_r9e036)n099$#b_*#*_+kyv#nl1
 DEBUG = True
 
 ALLOWED_HOSTS = []
+
 
 
 # Application definition
@@ -76,8 +83,13 @@ WSGI_APPLICATION = 'defade_backend.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'URL': env('DBURL'),
+        'NAME': env('DBNAME'),
+        'USER': env('DBUSER'),
+        'PASSWORD': env('DBPASSWORD'),
+        'HOST': env('DBHOST'),
+        'PORT': env('DBPORT')
     }
 }
 
