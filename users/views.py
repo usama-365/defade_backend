@@ -3,6 +3,7 @@ import jwt
 from rest_framework.exceptions import AuthenticationFailed
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from utils.authentication import extract_user_from_request_jwt
 
 from .models import User
 from .serializers import UserSerializer
@@ -45,15 +46,7 @@ class LoginView(APIView):
 
 class UserView(APIView):
     def get(self, request):
-        token = request.COOKIES.get('jwt')
-        if not token:
-            raise AuthenticationFailed("Unauthenticated")
-        try:
-            payload = jwt.decode(token, 'secret', algorithms=['HS256'])
-        except jwt.ExpiredSignatureError:
-            raise AuthenticationFailed("Unauthenticated")
-
-        user = User.objects.filter(id=payload['id']).first()
+        user = extract_user_from_request_jwt(request)
         serializer = UserSerializer(user)
         return Response(serializer.data)
 
